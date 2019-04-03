@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- bootstrap link -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- css file -->
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+  <title>Rock Paper Scissors Online</title>
+</head>
+<body>
+
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Rock Paper Scissors Online</h1>
+        <hr class="my-4">
+        <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                <div class="card">
+                    <div class="card-header">
+                      Player 1
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">Choose Wisely...</h5>
+                      <p id="player-one-wins">Wins:</p>
+                      <p id="player-one-losses">Losses:</p>
+                      <button type="button" class="btn btn-primary" id="player-one-rock-btn" player-one-rock-value="Rock">Rock</button>
+                      <button type="button" class="btn btn-primary" id="player-one-paper-btn" player-one-paper-value="Paper">Paper</button>
+                      <button type="button" class="btn btn-primary" id="player-one-scissor-btn"player-one-scissor-value="Scissor">Scissors</button>
+                    </div>
+                </div>
+              </div>
+              <br>
+              <br>
+              <br>
+              <div class="col-sm">
+                
+                
+              </div>
+              <br>
+              <br>
+              <br>
+              <div class="col-sm">
+                  <div class="card">
+                      <div class="card-header">
+                        Player 2
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title">Choose Wisely...</h5>
+                        <p id="player-two-wins">Wins:</p>
+                        <p id="player-two-losses">Losses:</p>
+                        <button type="button" class="btn btn-primary" id="player-two-rock-btn" player-two-rock-value="Rock">Rock</button>
+                        <button type="button" class="btn btn-primary" id="player-two-paper-btn" player-two-paper-value="Paper">Paper</button>
+                        <button type="button" class="btn btn-primary" id="player-two-scissors-btn" player-two-scissor-value="Scissor">Scissors</button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+        
+        <br>
+        <br>
+        <br>
+
+        <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                
+              </div>
+              <div class="col-sm">
+                  <div class="card">
+                      <div class="card-header">
+                        Event Log
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text" id="player-one-choice">Player 1 chose: </p>
+                        <p class="card-text" id="player-two-choice">Player 2 chose: </p>
+                      </div>
+                    </div>
+              </div>
+              <div class="col-sm">
+                
+              </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+
+
+
+   <!-- link to jquery and js file -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <script src="assets/javascript/app.js" type="text/javascript"></script> 
+</body>
+</html>
