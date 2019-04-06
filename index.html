@@ -1,100 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- bootstrap link -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <!-- css file -->
-  <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
-  <title>Rock Paper Scissors Online</title>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Rock, Paper, Scissors Multiplayer!</title>
+        <!-- bootstrap link -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" 
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <!-- css link -->
+        <link rel="stylesheet" href="assets/css/style.css">
+        <!-- jquery link -->
+        <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+        <!-- firebase link -->
+        <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
+        
+    </head>
 
-    <div class="jumbotron text-center">
-        <h1 class="display-4">Rock Paper Scissors Online</h1>
-        <hr class="my-4">
+    <body>
+
         <div class="container">
+
+	    <br>
+
+            <div class="jumbotron gametitle container">
+                <h1 class="text-center">Rock, Paper, Scissors!</h1>
+            </div>
+
             <div class="row">
-              <div class="col-sm">
-                <div class="card">
-                    <div class="card-header">
-                      Player 1
-                    </div>
-                    <div class="card-body">
-                      <h5 class="card-title">Choose Wisely...</h5>
-                      <p id="player-one-wins">Wins:</p>
-                      <p id="player-one-losses">Losses:</p>
-                      <button type="button" class="btn btn-primary" id="player-one-rock-btn" player-one-rock-value="Rock">Rock</button>
-                      <button type="button" class="btn btn-primary" id="player-one-paper-btn" player-one-paper-value="Paper">Paper</button>
-                      <button type="button" class="btn btn-primary" id="player-one-scissor-btn"player-one-scissor-value="Scissor">Scissors</button>
+                <div class="container namesubmission">
+                    <input type="text" id="playernameinput">
+                    <button type="submit" class="btn btn-default" id="adduser">Start</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container greetings">
+                    <h2>Hi <span id="playername"></span>! You are Player<span id="playernumber"></span></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container yourturn">
+                    <h2>It's Your Turn!</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container waitingmessage">
+                    <h2>Waiting for other player to choose.</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container toomanyplayers">
+                    <h2>The game is full, please try again later!</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container  col-md-12">
+                    <div class="row gameboxcontainer">
+                        <div class="container col-md-4">
+                            <div class="gameboxes playeronegamebox">
+                                <div class="row">
+                                    <div class="container col-md-12 text-center">
+                                        <h2>
+                                            <div id="waitingforplayerone">
+                                                    Waiting for Player 1
+                                            </div>
+                                            <div id="playeronename">
+                                                
+                                            </div>
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container col-md-12 text-center">
+                                        <h2>
+                                            <div id="playeronechoice">
+                                                    
+                                            </div>
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="row playeronechoicesrow">
+                                    <div class="container col-md-12 text-center">
+                                        <div class="row">
+                                            <div class="container col-md-12 text-center">
+                                                <div id="playeronerock">
+                                                    Rock
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container col-md-12 text-center">
+                                                <div id="playeronepaper">
+                                                    Paper
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container col-md-12 text-center">
+                                                <div id="playeronescissors">
+                                                    Scissors
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container playeronescore col-md-12 text-center">
+                                        <div class="winloss">Wins: <span id="playeronewincount"></span> Losses: 
+                                        <span id="playeronelosscount"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        </div>
+                        <div class="container col-md-4">
+                            <div class="gameboxes">
+                                <div class="row"> 
+                                    <div class="container col-md-12 text-center">
+                                        <h2>
+                                        <span id="middlemessage"></span>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            
+                        <div class="container col-md-4"> 
+                            <div class="gameboxes playertwogamebox">
+                                <div class="row">
+                                        <div class="container col-md-12 text-center">
+                                            <h2>
+                                                <div id="waitingforplayertwo">
+                                                    Waiting for Player 2
+                                                </div>
+                                                <div id="playertwoname">
+                                                    
+                                                </div>
+                                            </h2>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container col-md-12 text-center">
+                                        <h2>
+                                            <div id="playertwochoice">
+                                                    
+                                            </div>
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="row playertwochoicesrow">
+                                    <div class="container col-md-12 text-center">
+                                        <div class="row">
+                                            <div class="container col-md-12 text-center">
+                                                <div id="playertworock">
+                                                    Rock
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container col-md-12 text-center">
+                                                <div id="playertwopaper">
+                                                    Paper
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="container col-md-12 text-center">
+                                                <div id="playertwoscissors">
+                                                    Scissors
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="container playertwoscore col-md-12 text-center">
+                                        <div class="winloss">Wins: <span id="playertwowincount"></span> Losses: 
+                                        <span id="playertwolosscount"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-              </div>
-              <br>
-              <br>
-              <br>
-              <div class="col-sm">
-                
-                
-              </div>
-              <br>
-              <br>
-              <br>
-              <div class="col-sm">
-                  <div class="card">
-                      <div class="card-header">
-                        Player 2
-                      </div>
-                      <div class="card-body">
-                        <h5 class="card-title">Choose Wisely...</h5>
-                        <p id="player-two-wins">Wins:</p>
-                        <p id="player-two-losses">Losses:</p>
-                        <button type="button" class="btn btn-primary" id="player-two-rock-btn" player-two-rock-value="Rock">Rock</button>
-                        <button type="button" class="btn btn-primary" id="player-two-paper-btn" player-two-paper-value="Paper">Paper</button>
-                        <button type="button" class="btn btn-primary" id="player-two-scissors-btn" player-two-scissor-value="Scissor">Scissors</button>
-                      </div>
-                  </div>
-              </div>
             </div>
-        </div>
-        
-        <br>
-        <br>
-        <br>
 
-        <div class="container">
             <div class="row">
-              <div class="col-sm">
-                
-              </div>
-              <div class="col-sm">
-                  <div class="card">
-                      <div class="card-header">
-                        Event Log
-                      </div>
-                      <div class="card-body">
-                        <p class="card-text" id="player-one-choice">Player 1 chose: </p>
-                        <p class="card-text" id="player-two-choice">Player 2 chose: </p>
-                      </div>
+                <div class="chatbox jumbotron container">
+                    <div class="row">
+                        <div class="container">
+                            <div class="row">
+                                <div class="container">
+                                    <div id="chat-display"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
-              </div>
-              <div class="col-sm">
-                
-              </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    
-
-
-
-
-   <!-- link to jquery and js file -->
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-   <script src="assets/javascript/app.js" type="text/javascript"></script> 
-</body>
+            <div class="row">
+                <div class="container">
+                    <form id="chat-form">
+                        <label id="chat-form-label" for="chat-form-input">Chat:</label>
+                        <input id="chat-form-input" type="text">
+                        <input id="chat-form-btn" type="submit" value="Save">
+                    </form>
+                </div>
+            </div>
+          </div>
+    </body>
+    <script src="assets/javascript/app.js"></script>
 </html>
