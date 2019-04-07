@@ -242,98 +242,126 @@ function startPlayerTwo() {
 
 }
 
-
+//add user click event handler....
 $(document).on("click", "#adduser", function () {
 
+  //if player one and player two are null
   if (playerOneName === null && playerTwoName === null) {
-
+    //start our player one
     startPlayerOne();
     playerOneTurn = true;
+    //remove player one on disconnect
     database.ref("/players/1").onDisconnect().remove();
-    database.ref("/chatLog").onDisconnect().remove();
     return;
   }
 
+  //if there is player one and no player two
   if (playerOneName != null && playerTwoName === null) {
+    //start our player two
     startPlayerTwo();
+    //show our waiting message
     $(".waitingmessage").show();
+    //remove player two on disconnect
     database.ref("/players/2").onDisconnect().remove();
-    database.ref("/chatLog").onDisconnect().remove();
     return;
   }
+
+  //if there is player two and no player one
   if (playerOneName === null && playerTwoName != null) {
+    //start our player one
     startPlayerOne()
     playerOneTurn = true;
+    //show rock, paper, scissors
     $(".playeronechoicesrow").show();
+    //remove player one on disconnect
     database.ref("/players/1").onDisconnect().remove();
-    database.ref("/chatLog").onDisconnect().remove();
     return;
   }
+
 });
 
-
+//on player one win...
 function playerOneWin() {
+
+  //increment player one wins
   playerOneWinCount++;
+  //write into db the player two values
   database.ref("/players/2").set({
     Name: playerTwoName,
     Wins: playerTwoWinCount,
     Losses: playerTwoLossCount,
     Choice: null
-
   });
+  //write into db the player one values
   database.ref("/players/1").set({
     Name: playerOneName,
     Wins: playerOneWinCount,
     Losses: playerOneLossCount,
     Choice: null
   });
+  //output our win message
   $("#middlemessage").html(playerOneName + " Wins!");
   $("#middlemessage").show();
+  //hide win message after 3 seconds
   setTimeout(function hideMiddleMessage() {
     $("#middlemessage").hide();
   }, 3000);
-
+  //show player one choice
   $("#playeronechoice").show();
+  //show player two choice
   $("#playertwochoice").show();
+  //hide player one choice after 3 seconds
   setTimeout(function hidePlayerOneChoice() {
     $("#playeronechoice").hide();
   }, 3000);
+  //hide player two choice after 3 seconds
   setTimeout(function hidePlayerTwoChoice() {
     $("#playertwochoice").hide();
   }, 3000);
+
 }
 
+//on player two win...
 function playerTwoWin() {
+
+  //increment player two win
   playerTwoWinCount++;
+  //write into db player two values
   database.ref("/players/2").set({
     Name: playerTwoName,
     Wins: playerTwoWinCount,
     Losses: playerTwoLossCount,
     Choice: null
-
   });
+  //write into db player one values
   database.ref("/players/1").set({
     Name: playerOneName,
     Wins: playerOneWinCount,
     Losses: playerOneLossCount,
     Choice: null
   });
+  //output our win message
   $("#middlemessage").html(playerTwoName + " Wins!");
   $("#middlemessage").show();
+  //hide our win message after 3 seconds
   setTimeout(function hideMiddleMessage() {
     $("#middlemessage").hide();
   }, 3000);
-
+  //show player one choice
   $("#playeronechoice").show();
+  //show player two choice
   $("#playertwochoice").show();
+  //hide player one choice after 3 seconds
   setTimeout(function hidePlayerOneChoice() {
     $("#playeronechoice").hide();
   }, 3000);
+  //hide player two choice after 3 seconds
   setTimeout(function hidePlayerTwoChoice() {
     $("#playertwochoice").hide();
   }, 3000);
 
   playerTwoTurn = false;
+
 }
 
 function playerOneLoss() {
@@ -343,7 +371,6 @@ function playerOneLoss() {
     Wins: playerTwoWinCount,
     Losses: playerTwoLossCount,
     Choice: null
-
   });
   database.ref("/players/1").set({
     Name: playerOneName,
