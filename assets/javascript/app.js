@@ -9,377 +9,567 @@ var config = {
 };
 firebase.initializeApp(config);
 
-//variable to reference our database
+//firebase database variable
 var database = firebase.database();
-//connections stored in this directory
-var connectionsRef = database.ref("/connections");
-var connectedRef = database.ref(".info/connected");
-//database directory to hold our player info
+//holds boolean value for connected players
+var playerConnection = database.ref("/playerConnection");
+var isConnected = database.ref(".info/connected");
+//directory hold player structure
 var playerList = database.ref("/players");
-//database directory to hold player one
+//directory for player one
 var playerListOne = database.ref("/players/1");
-//database directory to hold player two
+//directory for player two
 var playerListTwo = database.ref("/players/2");
-//database directory to hold player one name
+//directory that holds player one name
 var playerListOneName = database.ref("/players/1/Name");
-//database directory to hold player two name
+//directory that holds player two name
 var playerListTwoName = database.ref("/players/2/Name");
-//database directory to hold player one wins
+//directory that holds player one wins
 var playerListOneWins = database.ref("/players/1/Wins");
-//database directory to hold player two wins
+//directory that holds player two wins
 var playerListTwoWins = database.ref("/players/2/Wins");
-//database directory to hold player one losses
+//directory that holds player one losses
 var playerListOneLosses = database.ref("/players/1/Losses");
-//database directory to hold player two losses
+//directory that holds player two losses
 var playerListTwoLosses = database.ref("/players/2/Losses");
-//database directory to hold player one choice
+//directory that holds player one choice
 var playerListOneChoice = database.ref("/players/1/Choice");
-//database directory to hold player two choice
+//directory that holds player two choice
 var playerListTwoChoice = database.ref("/players/2/Choice");
-
-//counter to hold player one wins
-var playerOneWin = 0;
-//counter to hold player one losses
-var playerOneLoss = 0;
-//counter to hold player two wins
-var playerTwoWin = 0;
-//counter to hold player two losses
-var playerTwoLoss = 0;
-//holds player one choice
-var playerOneChoice;
-//holds player two choice
-var playerTwoChoice;
+//variable to hold player one wins
+var playerOneWinCount = 0;
+//variable to hold player one losses
+var playerOneLossCount = 0;
+//variable to hold player two wins
+var playerTwoWinCount = 0;
+//variable to hold player two losses
+var playerTwoLossCount = 0;
 //initialize player one name null
 var playerOneName = null;
 //initialize player two name null
 var playerTwoName = null;
-//initialize player one turn
+//initialize player one turn false
 var playerOneTurn = false;
-//initialize player two turn
+//initialize player two turn false
 var playerTwoTurn = false;
-//set view of player one (player one selects, player two cannot see player one selection)
-var playerOneTurnPlayerTwoView = false;
-//set view of player one (player two selects, player one cannot see player twp selection)
-var playerTwoTurnPlayerOneView = false;
+//initialize player one choice null
 var playerOneChoice = null;
+//initialize player two choice null
 var playerTwoChoice = null;
 
-//choices for the player to make
-var rps = ["Rock", "Paper", "Scissors"];
 
 //when the client connection state changes
-connectedRef.on("value", function(snap){
-
-  console.log(snap.val());
-  console.log(snap.numChildren());
+isConnected.on("value", function (snap) {
 
   //if connected...
   if (snap.val()) {
-
     //add user to connection list
-    var con = connectionsRef.push(true);
-
+    var playerConnect = playerConnection.push(true);
     //remove user from connection list when they disconnect
-    con.onDisconnect().remove();
+    playerConnect.onDisconnect().remove();
   }
-  
+
 });
 
+
+
 //check for more than 2 people
-database.ref().once("value", function(snap) {
+database.ref().once("value", function (snap) {
 
   //if player 1 and player 2 exist
   if (snap.child("players/2").exists() === true && snap.child("players/1").exists() === true) {
     $(".toomanyplayers").show();
     $(".namesubmission").hide();
     return;
-    
   }
+
 });
 
-//check for player one....
-playerListOneName.on("value", function(snap) {
 
-  //if it exists, we get the value and output to html in player one spot
+playerListOneName.on("value", function (snap) {
   if (snap.exists()) {
     playerOneName = snap.val();
-    $("playeronename").html(playerOneName);
+    $("#playeronename").html(playerOneName);
     $("#waitingforplayerone").hide();
   }
 
-  //if it doesn't exits, we show our waiting for.... text
   if (snap.exists() === false) {
     $("#playeronename").html("");
     $("#waitingforplayerone").show();
     $(".playeronechoicesrow").hide();
   }
-
 });
 
-//check for player two...
-playerListTwoName.on("value", function(snap) {
-  
-  //if it exists, we get the value and output to html in player two spot
-  if (snap.exists()){
-      playerTwoName = snap.val();
-      $("#playertwoname").html(playerTwoName);
-      $("#waitingforplayertwo").hide(); 
+playerListTwoName.on("value", function (snap) {
+  if (snap.exists()) {
+    playerTwoName = snap.val();
+    $("#playertwoname").html(playerTwoName);
+    $("#waitingforplayertwo").hide();
   }
-  
-  //if it doesn't exist, we show waiting for.... text
   if (snap.exists() === false) {
-      $("#playertwoname").html("");
-      $("#waitingforplayertwo").show();
-      $(".playeronechoicesrow").hide();
+    $("#playertwoname").html("");
+    $("#waitingforplayertwo").show();
+    $(".playeronechoicesrow").hide();
   }
-
 });
 
-//check for player one wins....
-playerListOneWins.on("value", function(snap){
-  
-  //if there is a win, get the value and output to html in player one position
-  if (snap.exists()){
-      playerOneWin = snap.val();
-      $("#playeronewincount").html(playerOneWin);
-      $(".playeronescore").show();
+playerListOneWins.on("value", function (snap) {
+  if (snap.exists()) {
+    playerOneWinCount = snap.val();
+    $("#playeronewincount").html(playerOneWinCount);
+    $(".playeronescore").show();
   }
-
-  //hide player one score if there is nothing
   else {
-      $(".playeronescore").hide();
+    $(".playeronescore").hide();
   }
-
 });
 
-//check for player two wins....
-playerListTwoWins.on("value", function(snap){
-  
-  //if there is a win, get the value and output to html in player two position
-  if (snap.exists()){
-      playerTwoWin = snap.val();
-      $("#playertwowincount").html(playerTwoWin);
-      $(".playertwoscore").show();
+playerListTwoWins.on("value", function (snap) {
+  if (snap.exists()) {
+    playerTwoWinCount = snap.val();
+    $("#playertwowincount").html(playerTwoWinCount);
+    $(".playertwoscore").show();
   }
-  
-  //hide player two score if there is nothing
   else {
-      $(".playertwoscore").hide();
+    $(".playertwoscore").hide();
   }
-
 });
 
-//check for player one losses.....
-playerListOneLosses.on("value", function(snap){
-
-  //if there is a loss, get the value and output to html in the player one position
-  if (snap.exists()){
-      playerOneLoss = snap.val();
-      $("#playeronelosscount").html(playerOneLoss);
-      $(".playeronescore").show();
+playerListOneLosses.on("value", function (snap) {
+  if (snap.exists()) {
+    playerOneLossCount = snap.val();
+    $("#playeronelosscount").html(playerOneLossCount);
+    $(".playeronescore").show();
   }
-
-  //hide player one score if there is nothing
   else {
-      $(".playeronescore").hide();
+    $(".playeronescore").hide();
   }
-
 });
 
-//check for player two losses...
-playerListTwoLosses.on("value", function(snap){
-
-  //if there is a loss, get the value and output to html in the player two position
-  if (snap.exists()){
-      playerTwoLoss = snap.val();
-      $("#playertwolosscount").html(playerTwoLoss);
-      $(".playertwoscore").show();
+playerListTwoLosses.on("value", function (snap) {
+  if (snap.exists()) {
+    playerTwoLossCount = snap.val();
+    $("#playertwolosscount").html(playerTwoLossCount);
+    $(".playertwoscore").show();
   }
-
-  //hide player two score if there is nothing
   else {
-      $(".playertwoscore").hide();
+    $(".playertwoscore").hide();
   }
-
 });
 
-//our function to get our player one info....
 function startPlayerOne() {
-
-  //get the value from our text form
   playerOneName = $("#playernameinput").val().trim();
-
-  //output to html in the player one position
   $("#playeronename").html(playerOneName);
 
-  //output to html in our greetings class container
   $("#playername").html(playerOneName);
   $("#playernumber").html(" 1");
   $(".greetings").show();
 
-  //set our values for player one in the database
   database.ref("/players/1").set({
-      Name: playerOneName,
-      Wins: playerOneWin,
-      Losses: playerOneLoss
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount
   });
 
-  //clear the text form
   $("#playernameinput").val("");
-  //hide the submit button from player one
   $(".namesubmission").hide();
-  //hide the waiting for player one text
   $("#waitingforplayerone").hide();
 
-  //output player one win and loss to html
-  $("#playeronewincount").html(playerOneWin);
-  $("#playeronelosscount").html(playerOneLoss);
+  $("#playeronewincount").html(playerOneWinCount);
+  $("#playeronelosscount").html(playerOneLossCount);
   $(".playeronescore").show();
-
 }
 
-//our function to get our player two info....
 function startPlayerTwo() {
-
-  //get the value from our text form
   playerTwoName = $("#playernameinput").val().trim();
-
-  //outout to our html in player two position
   $("#playertwoname").html(playerTwoName);
 
-  //output to our html in our greeting class container
   $("#playername").html(playerTwoName);
   $("#playernumber").html(" 2");
   $(".greetings").show();
 
-  //set our values for player two in the database
   database.ref("/players/2").set({
-      Name: playerTwoName,
-      Wins: playerTwoWin,
-      Losses: playerTwoLoss
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount
   });
 
-  //clear the text form
   $("#playernameinput").val("");
-  //hide the submit button from player two
   $(".namesubmission").hide();
-  //hide the waiting for player two text
   $("#waitingforplayertwo").hide();
 
-  //output player two win and loss to html
-  $("#playertwowincount").html(playerTwoWin);
-  $("#playertwolosscount").html(playerTwoLoss);
+  $("#playertwowincount").html(playerTwoWinCount);
+  $("#playertwolosscount").html(playerTwoLossCount);
   $(".playertwoscore").show();
-
 }
 
-//add user click event handler....
-$(document).on("click", "#adduser", function(){
+function startPlayerOneWithExisting() {
+  playerOneName = $("#playernameinput").val().trim();
+  $("#playeronename").html(playerOneName);
 
-  //if player one and player two are null
-  if (playerOneName === null && playerTwoName === null){
-      
-      //start our player one
-      startPlayerOne();
-      playerOneTurn = true;
-      //remove player one on disconnect
-      database.ref("/players/1").onDisconnect().remove();
-      database.ref("/chatLog").onDisconnect().remove();
-      return;
+  $("#playername").html(playerOneName);
+  $("#playernumber").html(" 1");
+  $(".greetings").show();
+
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount
+  });
+
+  $("#playernameinput").val("");
+  $(".namesubmission").hide();
+  $("#waitingforplayerone").hide();
+
+  $("#playeronewincount").html(playerOneWinCount);
+  $("#playeronelosscount").html(playerOneLossCount);
+  $(".playeronescore").show();
+}
+
+
+
+
+$(document).on("click", "#adduser", function () {
+
+  if (playerOneName === null && playerTwoName === null) {
+
+    startPlayerOne();
+    playerOneTurn = true;
+    database.ref("/players/1").onDisconnect().remove();
+    database.ref("/chatLog").onDisconnect().remove();
+    return;
   }
 
-  //if there is player one and no player two
   if (playerOneName != null && playerTwoName === null) {
-
-      //start our player two
-      startPlayerTwo();
-      //show our waiting message
-      $(".waitingmessage").show();
-      database.ref("/players/2").onDisconnect().remove();
-      database.ref("/chatLog").onDisconnect().remove();
-      return;
+    startPlayerTwo();
+    $(".waitingmessage").show();
+    database.ref("/players/2").onDisconnect().remove();
+    database.ref("/chatLog").onDisconnect().remove();
+    return;
   }
   if (playerOneName === null && playerTwoName != null) {
-    
-      //start our player one
-      startPlayerOne();
-      playerOneTurn = true;
-      //show rock, paper, scissors
-      $(".playeronechoicesrow").show();
-      //remove player one on disconnect
-      database.ref("/players/1").onDisconnect().remove();
-      database.ref("/chatLog").onDisconnect().remove();
-      return;
+    startPlayerOneWithExisting();
+    playerOneTurn = true;
+    $(".playeronechoicesrow").show();
+    database.ref("/players/1").onDisconnect().remove();
+    database.ref("/chatLog").onDisconnect().remove();
+    return;
   }
 });
 
-//player one win function
 
-//player two win function
+function playerOneWin() {
+  playerOneWinCount++;
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: null
 
-//upon first load or if connection changes
-connectionsRef.on("value", function(snapshot) {
-
-  //console.log(snapshot.val());
-
-  //keep track of the user who visit
-  numPlayers = snapshot.numChildren();
-
-  //display in our html
-  //$("#watcher").text("Number of viewers: " + numPlayers);
-
-});
-
-//click event for player one
-$(".player-one").on("click", function(event){
-
-  //grab player one choice
-  playerOneChoice = $(this).attr("data-value");
-
-  //console.log(event);
-
-  //console.log("player one choice: " + playerOneChoice);
-
-  //save player one choice in our database
-  database.ref("/player-guess").push({
-    db_playerOneChoice: playerOneChoice
   });
-
-});
-
-
-
-//click event for player two
-$(".player-two").on("click", function(event){
-
-  //grab player two choice
-  playerTwoChoice = $(this).attr("data-value");
-
-  //console.log(event);
-
-  //console.log("player two choice: " + playerTwoChoice);
-
-  //save player two choice in our database
-  database.ref("/player-guess").push({
-    db_playerTwoChoice: playerTwoChoice
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: null
   });
+  $("#middlemessage").html(playerOneName + " Wins!");
+  $("#middlemessage").show();
+  setTimeout(function hideMiddleMessage() {
+    $("#middlemessage").hide();
+  }, 3000);
+
+  $("#playeronechoice").show();
+  $("#playertwochoice").show();
+  setTimeout(function hidePlayerOneChoice() {
+    $("#playeronechoice").hide();
+  }, 3000);
+  setTimeout(function hidePlayerTwoChoice() {
+    $("#playertwochoice").hide();
+  }, 3000);
+}
+
+function playerTwoWin() {
+  playerTwoWinCount++;
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: null
+
+  });
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: null
+  });
+  $("#middlemessage").html(playerTwoName + " Wins!");
+  $("#middlemessage").show();
+  setTimeout(function hideMiddleMessage() {
+    $("#middlemessage").hide();
+  }, 3000);
+
+  $("#playeronechoice").show();
+  $("#playertwochoice").show();
+  setTimeout(function hidePlayerOneChoice() {
+    $("#playeronechoice").hide();
+  }, 3000);
+  setTimeout(function hidePlayerTwoChoice() {
+    $("#playertwochoice").hide();
+  }, 3000);
+
+  playerTwoTurn = false;
+}
+
+function playerOneLoss() {
+  playerOneLossCount++;
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: null
+
+  });
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: null
+  });
+}
+
+function playerTwoLoss() {
+  playerTwoLossCount++;
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: null
+
+  });
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: null
+  });
+  playerTwoTurn = false;
+}
+
+function tieGame() {
+  $("#playeronechoice").show();
+  $("#playertwochoice").show();
+  setTimeout(function hidePlayerOneChoice() {
+    $("#playeronechoice").hide();
+  }, 3000);
+  setTimeout(function hidePlayerTwoChoice() {
+    $("#playertwochoice").hide();
+  }, 3000);
+  $("#middlemessage").html("Tie Game!");
+  $("#middlemessage").show();
+  setTimeout(function hideMiddleMessage() {
+    $("#middlemessage").hide();
+  }, 3000);
+  playerTwoTurn = false;
+
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: null
+
+  });
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: null
+  });
+}
+
+
+
+
+$(document).on("click", "#playeronerock", function () {
+  playerOneChoice = "Rock";
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: playerOneChoice
+  });
+  $("#playeronechoice").html(playerOneChoice);
+  $("#playeronechoice").show();
+  $(".playeronechoicesrow").hide();
+  $(".yourturn").hide();
+  $(".waitingmessage").show();
 
 });
 
-//try child_changed....
-database.ref("/player-guess").on("value", function (snapshot) {
+$(document).on("click", "#playeronepaper", function () {
+  playerOneChoice = "Paper";
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: playerOneChoice
+  });
+  $("#playeronechoice").html(playerOneChoice);
+  $("#playeronechoice").show();
+  $(".playeronechoicesrow").hide();
+  $(".yourturn").hide();
+  $(".waitingmessage").show();
+});
 
-  //console.log(snapshot.val());
- // console.log(snapshot.child());
-  //console.log(snapshot.children());
-  //console.log("from database player one: " + snapshot.val().db_playerOneChoice);
-  //console.log("from database player two: " + snapshot.val().db_playerTwoChoice);
+$(document).on("click", "#playeronescissors", function () {
+  playerOneChoice = "Scissors"
+  database.ref("/players/1").set({
+    Name: playerOneName,
+    Wins: playerOneWinCount,
+    Losses: playerOneLossCount,
+    Choice: playerOneChoice
+  });
+  $("#playeronechoice").html(playerOneChoice);
+  $("#playeronechoice").show();
+  $(".playeronechoicesrow").hide();
+  $(".yourturn").hide();
+  $(".waitingmessage").show();
+
+});
+
+$(document).on("click", "#playertworock", function () {
+  playerTwoChoice = "Rock";
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: playerTwoChoice
+  });
+  $("#playertwochoice").html(playerTwoChoice);
+  $("#playertwochoice").show();
+  $(".playertwochoicesrow").hide();
+  $(".yourturn").hide();
 
 
+});
+
+$(document).on("click", "#playertwopaper", function () {
+  playerTwoChoice = "Paper";
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: playerTwoChoice
+  });
+  $("#playertwochoice").html(playerTwoChoice);
+  $("#playertwochoice").show();
+  $(".playertwochoicesrow").hide();
+  $(".yourturn").hide();
+
+
+
+});
+
+$(document).on("click", "#playertwoscissors", function () {
+  playerTwoChoice = "Scissors"
+  database.ref("/players/2").set({
+    Name: playerTwoName,
+    Wins: playerTwoWinCount,
+    Losses: playerTwoLossCount,
+    Choice: playerTwoChoice
+  });
+  $("#playertwochoice").html(playerTwoChoice);
+  $("#playertwochoice").show();
+  $(".playertwochoicesrow").hide();
+  $(".yourturn").hide();
+
+
+
+});
+
+function evaluateChoices() {
+
+  if (playerOneChoice === "Rock" && playerTwoChoice === "Rock") {
+    tieGame();
+
+  }
+
+  else if (playerOneChoice === "Rock" && playerTwoChoice === "Paper") {
+    playerOneLoss();
+    playerTwoWin();
+  }
+
+  else if (playerOneChoice === "Rock" && playerTwoChoice === "Scissors") {
+    playerOneWin();
+    playerTwoLoss();
+  }
+
+  else if (playerOneChoice === "Paper" && playerTwoChoice === "Rock") {
+    playerOneWin();
+    playerTwoLoss();
+  }
+
+  else if (playerOneChoice === "Paper" && playerTwoChoice === "Paper") {
+    tieGame();
+
+  }
+
+  else if (playerOneChoice === "Paper" && playerTwoChoice === "Scissors") {
+    playerOneLoss();
+    playerTwoWin();
+  }
+
+  else if (playerOneChoice === "Scissors" && playerTwoChoice === "Rock") {
+    playerOneLoss();
+    playerTwoWin();
+  }
+
+  else if (playerOneChoice === "Scissors" && playerTwoChoice === "Paper") {
+    playerOneWin();
+    playerTwoLoss();
+  }
+
+  else if (playerOneChoice === "Scissors" && playerTwoChoice === "Scissors") {
+    tieGame();
+  }
+}
+
+
+playerListOneChoice.on("value", function (snap) {
+  if (snap.exists() && playerOneTurn === false) {          //player 2 sees this only cause of joining makes playerTwoTurn = false
+    $(".playertwochoicesrow").show();
+    $(".yourturn").show();
+    $(".waitingmessage").hide();
+    playerOneChoice = snap.val();
+    $("#playeronechoice").hide();
+    $("#playeronechoice").html(playerOneChoice);
+  }
+
+});
+
+playerListTwoChoice.on("value", function (snap) {
+  if (snap.exists()) {
+    playerTwoChoice = snap.val();
+    $("#playertwochoice").html(playerTwoChoice);
+    $(".waitingmessage").hide();
+    evaluateChoices();
+
+  }
+});
+
+playerList.on("value", function (snap) {
+
+
+  if (snap.numChildren() === 2 && playerOneTurn === true) {            //Only player 1 view
+    $(".playeronechoicesrow").show();
+    $(".yourturn").show();
+    playerTwoTurn = true;
+  }
 });
 
 //Hide the necessary pieces on loading the page
-$(document).ready(function(){
+$(document).ready(function () {
   $(".greetings").hide();
   $(".yourturn").hide();
   $(".waitingmessage").hide();
