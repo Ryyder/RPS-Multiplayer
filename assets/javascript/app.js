@@ -85,14 +85,16 @@ database.ref().once("value", function (snap) {
 
 });
 
-
+//event handler for player one....
 playerListOneName.on("value", function (snap) {
+
+  //if it exists, we get the value and output to html in player one spot
   if (snap.exists()) {
     playerOneName = snap.val();
     $("#playeronename").html(playerOneName);
     $("#waitingforplayerone").hide();
   }
-
+  //if it doesn't exits, we show our waiting for.... text
   if (snap.exists() === false) {
     $("#playeronename").html("");
     $("#waitingforplayerone").show();
@@ -100,133 +102,145 @@ playerListOneName.on("value", function (snap) {
   }
 });
 
+//event handler for player two...
 playerListTwoName.on("value", function (snap) {
+  
+  //if it exists, we get the value and output to html in player two spot
   if (snap.exists()) {
     playerTwoName = snap.val();
     $("#playertwoname").html(playerTwoName);
     $("#waitingforplayertwo").hide();
   }
+  //if it doesn't exist, we show waiting for.... text
   if (snap.exists() === false) {
     $("#playertwoname").html("");
     $("#waitingforplayertwo").show();
     $(".playeronechoicesrow").hide();
   }
+
 });
 
+//event handler for player one wins
 playerListOneWins.on("value", function (snap) {
+  
+  //if there is a win, get the value and output to html in player one position
   if (snap.exists()) {
     playerOneWinCount = snap.val();
     $("#playeronewincount").html(playerOneWinCount);
     $(".playeronescore").show();
   }
+  //hide player one score if there is nothing
   else {
     $(".playeronescore").hide();
   }
+
 });
 
+//event handler for player two wins....
 playerListTwoWins.on("value", function (snap) {
+  
+  //if there is a win, get the value and output to html in player two position
   if (snap.exists()) {
     playerTwoWinCount = snap.val();
     $("#playertwowincount").html(playerTwoWinCount);
     $(".playertwoscore").show();
   }
+  //hide player two score if there is nothing
   else {
     $(".playertwoscore").hide();
   }
+
 });
 
+//event handler for player one losses.....
 playerListOneLosses.on("value", function (snap) {
+
+  //if there is a loss, get the value and output to html in the player one position
   if (snap.exists()) {
     playerOneLossCount = snap.val();
     $("#playeronelosscount").html(playerOneLossCount);
     $(".playeronescore").show();
   }
+  //hide player one score if there is nothing
   else {
     $(".playeronescore").hide();
   }
+
 });
 
+//event handler for player two losses...
 playerListTwoLosses.on("value", function (snap) {
+
+  //if there is a loss, get the value and output to html in the player two position
   if (snap.exists()) {
     playerTwoLossCount = snap.val();
     $("#playertwolosscount").html(playerTwoLossCount);
     $(".playertwoscore").show();
   }
+  //hide player two score if there is nothing
   else {
     $(".playertwoscore").hide();
   }
+
 });
 
+//our function to get our player one info....
 function startPlayerOne() {
-  playerOneName = $("#playernameinput").val().trim();
-  $("#playeronename").html(playerOneName);
 
+  //get the value from our text form
+  playerOneName = $("#playernameinput").val().trim();
+  //output to html in the player one position
+  $("#playeronename").html(playerOneName);
+  //output to html in our greetings class container
   $("#playername").html(playerOneName);
   $("#playernumber").html(" 1");
   $(".greetings").show();
-
+  //set our values for player one in the database
   database.ref("/players/1").set({
     Name: playerOneName,
     Wins: playerOneWinCount,
     Losses: playerOneLossCount
   });
-
+  //clear the text form
   $("#playernameinput").val("");
+  //hide the submit button from player one
   $(".namesubmission").hide();
+  //hide the waiting for player one text
   $("#waitingforplayerone").hide();
-
+  //output player one win and loss to html
   $("#playeronewincount").html(playerOneWinCount);
   $("#playeronelosscount").html(playerOneLossCount);
   $(".playeronescore").show();
+
 }
 
+//our function to get our player two info....
 function startPlayerTwo() {
+  
+  //get the value from our text form
   playerTwoName = $("#playernameinput").val().trim();
+  //outout to our html in player two position
   $("#playertwoname").html(playerTwoName);
-
+  //output to our html in our greeting class container
   $("#playername").html(playerTwoName);
   $("#playernumber").html(" 2");
   $(".greetings").show();
-
+  //set our values for player two in the database
   database.ref("/players/2").set({
     Name: playerTwoName,
     Wins: playerTwoWinCount,
     Losses: playerTwoLossCount
   });
-
+  //clear the text form
   $("#playernameinput").val("");
   $(".namesubmission").hide();
   $("#waitingforplayertwo").hide();
-
+  //output player two win and loss to html
   $("#playertwowincount").html(playerTwoWinCount);
   $("#playertwolosscount").html(playerTwoLossCount);
   $(".playertwoscore").show();
+
 }
-
-function startPlayerOneWithExisting() {
-  playerOneName = $("#playernameinput").val().trim();
-  $("#playeronename").html(playerOneName);
-
-  $("#playername").html(playerOneName);
-  $("#playernumber").html(" 1");
-  $(".greetings").show();
-
-  database.ref("/players/1").set({
-    Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount
-  });
-
-  $("#playernameinput").val("");
-  $(".namesubmission").hide();
-  $("#waitingforplayerone").hide();
-
-  $("#playeronewincount").html(playerOneWinCount);
-  $("#playeronelosscount").html(playerOneLossCount);
-  $(".playeronescore").show();
-}
-
-
 
 
 $(document).on("click", "#adduser", function () {
@@ -248,7 +262,7 @@ $(document).on("click", "#adduser", function () {
     return;
   }
   if (playerOneName === null && playerTwoName != null) {
-    startPlayerOneWithExisting();
+    startPlayerOne()
     playerOneTurn = true;
     $(".playeronechoicesrow").show();
     database.ref("/players/1").onDisconnect().remove();
