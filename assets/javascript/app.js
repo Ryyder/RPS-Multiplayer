@@ -58,33 +58,6 @@ var playerOneChoice = null;
 var playerTwoChoice = null;
 
 
-//when the client connection state changes
-isConnected.on("value", function (snap) {
-
-  //if connected...
-  if (snap.val()) {
-    //add user to connection list
-    var playerConnect = playerConnection.push(true);
-    //remove user from connection list when they disconnect
-    playerConnect.onDisconnect().remove();
-  }
-
-});
-
-
-
-//check for more than 2 people
-database.ref().once("value", function (snap) {
-
-  //if player 1 and player 2 exist
-  if (snap.child("players/2").exists() === true && snap.child("players/1").exists() === true) {
-    $(".toomanyplayers").show();
-    $(".namesubmission").hide();
-    return;
-  }
-
-});
-
 //event handler for player one....
 playerListOneName.on("value", function (snap) {
 
@@ -364,31 +337,41 @@ function playerTwoWin() {
 
 }
 
+//on player one loss...
 function playerOneLoss() {
+
+  //increment our player one loss counter
   playerOneLossCount++;
+  //set db values for player two
   database.ref("/players/2").set({
     Name: playerTwoName,
     Wins: playerTwoWinCount,
     Losses: playerTwoLossCount,
     Choice: null
   });
+  //set db values for player one
   database.ref("/players/1").set({
     Name: playerOneName,
     Wins: playerOneWinCount,
     Losses: playerOneLossCount,
     Choice: null
   });
+
 }
 
+//on player two loss....
 function playerTwoLoss() {
+
+  //increment ouru player two loss counter
   playerTwoLossCount++;
+  //set db values for player two
   database.ref("/players/2").set({
     Name: playerTwoName,
     Wins: playerTwoWinCount,
     Losses: playerTwoLossCount,
     Choice: null
-
   });
+  //set db values for player one
   database.ref("/players/1").set({
     Name: playerOneName,
     Wins: playerOneWinCount,
@@ -396,40 +379,92 @@ function playerTwoLoss() {
     Choice: null
   });
   playerTwoTurn = false;
+
 }
 
+//on tie game...
 function tieGame() {
+  //show player one choice
   $("#playeronechoice").show();
+  //show player two choice
   $("#playertwochoice").show();
+  //timer to hide player one choice
   setTimeout(function hidePlayerOneChoice() {
     $("#playeronechoice").hide();
   }, 3000);
+  //timer to hide player two choice
   setTimeout(function hidePlayerTwoChoice() {
     $("#playertwochoice").hide();
   }, 3000);
+  //output our message
   $("#middlemessage").html("Tie Game!");
   $("#middlemessage").show();
+  //hide our message
   setTimeout(function hideMiddleMessage() {
     $("#middlemessage").hide();
   }, 3000);
   playerTwoTurn = false;
-
+  //set our db values for player two
   database.ref("/players/2").set({
     Name: playerTwoName,
     Wins: playerTwoWinCount,
     Losses: playerTwoLossCount,
     Choice: null
-
   });
+  //set our db values for player one
   database.ref("/players/1").set({
     Name: playerOneName,
     Wins: playerOneWinCount,
     Losses: playerOneLossCount,
     Choice: null
   });
+
 }
 
+//listen for value on playerlistonechoice directory
+playerListOneChoice.on("value", function (snap) {
 
+  //if player one exists and has made a choice...
+  if (snap.exists() && playerOneTurn === false) {   
+    //show player two choices       
+    $(".playertwochoicesrow").show();
+    //output your turn to player two
+    $(".yourturn").show();
+    //hide waiting message
+    $(".waitingmessage").hide();
+    //grab player one choice
+    playerOneChoice = snap.val();
+    $("#playeronechoice").hide();
+    $("#playeronechoice").html(playerOneChoice);
+  }
+
+});
+
+//listen for value on playerlisttwochoice directory
+playerListTwoChoice.on("value", function (snap) {
+  //if player two exists...
+  if (snap.exists()) {
+    //get player two choice
+    playerTwoChoice = snap.val();
+    $("#playertwochoice").html(playerTwoChoice);
+    $(".waitingmessage").hide();
+    //call our rps logic
+    evaluateChoices();
+  }
+
+});
+
+//listen for value on playerlist
+playerList.on("value", function (snap) {
+
+  //if there are two players and player one turn
+  if (snap.numChildren() === 2 && playerOneTurn === true) {                   //show player one choices
+    $(".playeronechoicesrow").show();
+    $(".yourturn").show();
+    playerTwoTurn = true;
+  }
+
+});
 
 
 $(document).on("click", "#playeronerock", function () {
@@ -461,6 +496,7 @@ $(document).on("click", "#playeronepaper", function () {
   $(".playeronechoicesrow").hide();
   $(".yourturn").hide();
   $(".waitingmessage").show();
+
 });
 
 $(document).on("click", "#playeronescissors", function () {
@@ -492,7 +528,6 @@ $(document).on("click", "#playertworock", function () {
   $(".playertwochoicesrow").hide();
   $(".yourturn").hide();
 
-
 });
 
 $(document).on("click", "#playertwopaper", function () {
@@ -507,8 +542,6 @@ $(document).on("click", "#playertwopaper", function () {
   $("#playertwochoice").show();
   $(".playertwochoicesrow").hide();
   $(".yourturn").hide();
-
-
 
 });
 
@@ -525,15 +558,13 @@ $(document).on("click", "#playertwoscissors", function () {
   $(".playertwochoicesrow").hide();
   $(".yourturn").hide();
 
-
-
 });
 
+//our rock paper scissor logic...
 function evaluateChoices() {
 
   if (playerOneChoice === "Rock" && playerTwoChoice === "Rock") {
     tieGame();
-
   }
 
   else if (playerOneChoice === "Rock" && playerTwoChoice === "Paper") {
@@ -553,7 +584,6 @@ function evaluateChoices() {
 
   else if (playerOneChoice === "Paper" && playerTwoChoice === "Paper") {
     tieGame();
-
   }
 
   else if (playerOneChoice === "Paper" && playerTwoChoice === "Scissors") {
@@ -574,39 +604,33 @@ function evaluateChoices() {
   else if (playerOneChoice === "Scissors" && playerTwoChoice === "Scissors") {
     tieGame();
   }
+
 }
 
+//when the client connection state changes
+isConnected.on("value", function (snap) {
 
-playerListOneChoice.on("value", function (snap) {
-  if (snap.exists() && playerOneTurn === false) {          //player 2 sees this only cause of joining makes playerTwoTurn = false
-    $(".playertwochoicesrow").show();
-    $(".yourturn").show();
-    $(".waitingmessage").hide();
-    playerOneChoice = snap.val();
-    $("#playeronechoice").hide();
-    $("#playeronechoice").html(playerOneChoice);
+  //if connected...
+  if (snap.val()) {
+    //add user to connection list
+    var playerConnect = playerConnection.push(true);
+    //remove user from connection list when they disconnect
+    playerConnect.onDisconnect().remove();
   }
 
 });
 
-playerListTwoChoice.on("value", function (snap) {
-  if (snap.exists()) {
-    playerTwoChoice = snap.val();
-    $("#playertwochoice").html(playerTwoChoice);
-    $(".waitingmessage").hide();
-    evaluateChoices();
 
+//check for more than 2 people
+database.ref().once("value", function (snap) {
+
+  //if player 1 and player 2 exist
+  if (snap.child("players/2").exists() === true && snap.child("players/1").exists() === true) {
+    $(".toomanyplayers").show();
+    $(".namesubmission").hide();
+    return;
   }
-});
 
-playerList.on("value", function (snap) {
-
-
-  if (snap.numChildren() === 2 && playerOneTurn === true) {            //Only player 1 view
-    $(".playeronechoicesrow").show();
-    $(".yourturn").show();
-    playerTwoTurn = true;
-  }
 });
 
 //Hide the necessary pieces on loading the page
