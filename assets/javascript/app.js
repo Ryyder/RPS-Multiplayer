@@ -7,6 +7,7 @@ var config = {
   storageBucket: "rps-online-1ad52.appspot.com",
   messagingSenderId: "903360965756"
 };
+
 firebase.initializeApp(config);
 
 //firebase database variable
@@ -73,6 +74,7 @@ playerListOneName.on("value", function (snap) {
     $("#player-one-wait").show();
     $(".player-one-buttons").hide();
   }
+  
 });
 
 //event handler for player two...
@@ -162,6 +164,9 @@ function startPlayerOne() {
 
   //get the value from our text form
   playerOneName = $("#name-input").val().trim();
+
+  //if player one input is not an emptry string...
+  if (playerOneName != "") {
   //output to html in the player one position
   $("#player-one-name").html(playerOneName);
   //output to html in our greetings class container
@@ -184,6 +189,7 @@ function startPlayerOne() {
   $("#player-one-win").html(playerOneWinCount);
   $("#player-one-loss").html(playerOneLossCount);
   $(".score-player-one").show();
+  }
 
 }
 
@@ -192,6 +198,9 @@ function startPlayerTwo() {
   
   //get the value from our text form
   playerTwoName = $("#name-input").val().trim();
+
+  //if player two input is not the empty string...
+  if (playerTwoName != "") {
   //outout to our html in player two position
   $("#player-two-name").html(playerTwoName);
   //output to our html in our greeting class container
@@ -212,11 +221,16 @@ function startPlayerTwo() {
   $("#player-two-win").html(playerTwoWinCount);
   $("#player-two-loss").html(playerTwoLossCount);
   $(".score-player-two").show();
+  }
 
 }
 
 //add user click event handler....
-$("#name-submit").on("click", function () {
+$("#name-submit").on("click", function (event) {
+
+  // Preventing the submit button from trying to submit the form
+  // We're optionally using a form so the user may hit Enter to search instead of clicking the button
+  event.preventDefault();
 
   //if player one and player two are null
   if (playerOneName === null && playerTwoName === null) {
