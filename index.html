@@ -28,27 +28,33 @@
       <h1 class="text-center">Multiplayer Rock, Paper, Scissors!</h1>
     </div>
 
+    <!-- Input box for user to enter in name -->
     <div class="row">
       <div class="container name-submit">
         <input type="text" id="name-input">
         <button type="submit" class="btn btn-dark" id="name-submit">Start</button>
       </div>
     </div>
+
+    <!-- Greeting message for our players, gets hidden with js -->
     <div class="row">
       <div class="container greetings">
         <h2>Hi <span id="user-name"></span>! You are Player<span id="user-number"></span></h2>
       </div>
     </div>
+    <!-- notifies player it's their turn, gets hidden with js -->
     <div class="row">
       <div class="container player-turn">
         <h2>It's Your Turn!</h2>
       </div>
     </div>
+    <!-- once player has made a choice, this wait message appears on their screen. get hidden with js -->
     <div class="row">
       <div class="container wait-message">
         <h2>Waiting for player...</h2>
       </div>
     </div>
+    <!-- notifies other players if the game is full. get hidden with js -->
     <div class="row">
       <div class="container player-limit">
         <h2>The game is full, please wait</h2>
@@ -80,6 +86,7 @@
                   </h2>
                 </div>
               </div>
+              <!-- player one choice of rock paper scissors -->
               <div class="row player-one-buttons">
                 <div class="container col-md-12 text-center">
                   <div class="row">
@@ -99,6 +106,7 @@
                   </div>
                 </div>
               </div>
+              <!-- displays win/loss of player one -->
               <div class="row">
                 <div class="container score-player-one col-md-12 text-center">
                   <div class="win-loss">Wins: <span id="player-one-win"></span> Losses:
@@ -110,6 +118,7 @@
           </div>
           <div class="container col-md-4">
             <div>
+            <!-- win/loss messages appear here -->
               <div class="row">
                 <div class="container col-md-12 text-center">
                   <h2>
@@ -143,6 +152,7 @@
                   </h2>
                 </div>
               </div>
+              <!-- player two choices of rock paper scissors -->
               <div class="row player-two-buttons">
                 <div class="container col-md-12 text-center">
                   <div class="row">
@@ -162,6 +172,7 @@
                   </div>
                 </div>
               </div>
+              <!-- player two win/loss -->
               <div class="row">
                 <div class="container score-player-two col-md-12 text-center">
                   <div class="win-loss">Wins: <span id="player-two-win"></span> Losses:
