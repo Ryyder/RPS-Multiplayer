@@ -38,13 +38,13 @@ var playerListOneChoice = database.ref("/players/1/Choice");
 //directory that holds player two choice
 var playerListTwoChoice = database.ref("/players/2/Choice");
 //variable to hold player one wins
-var playerOneWinCount = 0;
+var playerOneWinCounter = 0;
 //variable to hold player one losses
-var playerOneLossCount = 0;
+var playerOneLossCounter = 0;
 //variable to hold player two wins
-var playerTwoWinCount = 0;
+var playerTwoWinCounter = 0;
 //variable to hold player two losses
-var playerTwoLossCount = 0;
+var playerTwoLossCounter = 0;
 //initialize player one name null
 var playerOneName = null;
 //initialize player two name null
@@ -100,8 +100,8 @@ playerListOneWins.on("value", function (snap) {
   
   //if there is a win, get the value and output to html in player one position
   if (snap.exists()) {
-    playerOneWinCount = snap.val();
-    $("#player-one-win").html(playerOneWinCount);
+    playerOneWinCounter = snap.val();
+    $("#player-one-win").html(playerOneWinCounter);
     $(".score-player-one").show();
   }
   //hide player one score if there is nothing
@@ -116,8 +116,8 @@ playerListTwoWins.on("value", function (snap) {
   
   //if there is a win, get the value and output to html in player two position
   if (snap.exists()) {
-    playerTwoWinCount = snap.val();
-    $("#player-two-win").html(playerTwoWinCount);
+    playerTwoWinCounter = snap.val();
+    $("#player-two-win").html(playerTwoWinCounter);
     $(".score-player-two").show();
   }
   //hide player two score if there is nothing
@@ -132,8 +132,8 @@ playerListOneLosses.on("value", function (snap) {
 
   //if there is a loss, get the value and output to html in the player one position
   if (snap.exists()) {
-    playerOneLossCount = snap.val();
-    $("#player-one-loss").html(playerOneLossCount);
+    playerOneLossCounter = snap.val();
+    $("#player-one-loss").html(playerOneLossCounter);
     $(".score-player-one").show();
   }
   //hide player one score if there is nothing
@@ -148,8 +148,8 @@ playerListTwoLosses.on("value", function (snap) {
 
   //if there is a loss, get the value and output to html in the player two position
   if (snap.exists()) {
-    playerTwoLossCount = snap.val();
-    $("#player-two-loss").html(playerTwoLossCount);
+    playerTwoLossCounter = snap.val();
+    $("#player-two-loss").html(playerTwoLossCounter);
     $(".score-player-two").show();
   }
   //hide player two score if there is nothing
@@ -176,8 +176,8 @@ function startPlayerOne() {
   //set our values for player one in the database
   database.ref("/players/1").set({
     Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount
+    Wins: playerOneWinCounter,
+    Losses: playerOneLossCounter
   });
   //clear the text form
   $("#name-input").val("");
@@ -186,8 +186,8 @@ function startPlayerOne() {
   //hide the waiting for player one text
   $("#player-one-wait").hide();
   //output player one win and loss to html
-  $("#player-one-win").html(playerOneWinCount);
-  $("#player-one-loss").html(playerOneLossCount);
+  $("#player-one-win").html(playerOneWinCounter);
+  $("#player-one-loss").html(playerOneLossCounter);
   $(".score-player-one").show();
   }
 
@@ -210,16 +210,16 @@ function startPlayerTwo() {
   //set our values for player two in the database
   database.ref("/players/2").set({
     Name: playerTwoName,
-    Wins: playerTwoWinCount,
-    Losses: playerTwoLossCount
+    Wins: playerTwoWinCounter,
+    Losses: playerTwoLossCounter
   });
   //clear the text form
   $("#name-input").val("");
   $(".name-submit").hide();
   $("#player-two-wait").hide();
   //output player two win and loss to html
-  $("#player-two-win").html(playerTwoWinCount);
-  $("#player-two-loss").html(playerTwoLossCount);
+  $("#player-two-win").html(playerTwoWinCounter);
+  $("#player-two-loss").html(playerTwoLossCounter);
   $(".score-player-two").show();
   }
 
@@ -271,26 +271,26 @@ $("#name-submit").on("click", function (event) {
 function playerOneWin() {
 
   //increment player one wins
-  playerOneWinCount++;
+  playerOneWinCounter++;
   //write into db the player two values
   database.ref("/players/2").set({
     Name: playerTwoName,
-    Wins: playerTwoWinCount,
-    Losses: playerTwoLossCount,
+    Wins: playerTwoWinCounter,
+    Losses: playerTwoLossCounter,
     Choice: null
   });
   //write into db the player one values
   database.ref("/players/1").set({
     Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount,
+    Wins: playerOneWinCounter,
+    Losses: playerOneLossCounter,
     Choice: null
   });
   //output our win message
   $("#event-msg").html(playerOneName + " Wins!");
   $("#event-msg").show();
   //hide win message after 3 seconds
-  setTimeout(function hideMiddleMessage() {
+  setTimeout(function hideeventMsg() {
     $("#event-msg").hide();
   }, 3000);
   //show player one choice
@@ -298,11 +298,11 @@ function playerOneWin() {
   //show player two choice
   $("#choice-player-two").show();
   //hide player one choice after 3 seconds
-  setTimeout(function hidePlayerOneChoice() {
+  setTimeout(function hidechoicePlayerOne() {
     $("#choice-player-one").hide();
   }, 3000);
   //hide player two choice after 3 seconds
-  setTimeout(function hidePlayerTwoChoice() {
+  setTimeout(function hidechoicePlayerTwo() {
     $("#choice-player-two").hide();
   }, 3000);
 
@@ -312,26 +312,26 @@ function playerOneWin() {
 function playerTwoWin() {
 
   //increment player two win
-  playerTwoWinCount++;
+  playerTwoWinCounter++;
   //write into db player two values
   database.ref("/players/2").set({
     Name: playerTwoName,
-    Wins: playerTwoWinCount,
-    Losses: playerTwoLossCount,
+    Wins: playerTwoWinCounter,
+    Losses: playerTwoLossCounter,
     Choice: null
   });
   //write into db player one values
   database.ref("/players/1").set({
     Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount,
+    Wins: playerOneWinCounter,
+    Losses: playerOneLossCounter,
     Choice: null
   });
   //output our win message
   $("#event-msg").html(playerTwoName + " Wins!");
   $("#event-msg").show();
   //hide our win message after 3 seconds
-  setTimeout(function hideMiddleMessage() {
+  setTimeout(function hideeventMsg() {
     $("#event-msg").hide();
   }, 3000);
   //show player one choice
@@ -339,11 +339,11 @@ function playerTwoWin() {
   //show player two choice
   $("#choice-player-two").show();
   //hide player one choice after 3 seconds
-  setTimeout(function hidePlayerOneChoice() {
+  setTimeout(function hidechoicePlayerOne() {
     $("#choice-player-one").hide();
   }, 3000);
   //hide player two choice after 3 seconds
-  setTimeout(function hidePlayerTwoChoice() {
+  setTimeout(function hidechoicePlayerTwo() {
     $("#choice-player-two").hide();
   }, 3000);
 
@@ -355,19 +355,19 @@ function playerTwoWin() {
 function playerOneLoss() {
 
   //increment our player one loss counter
-  playerOneLossCount++;
+  playerOneLossCounter++;
   //set db values for player two
   database.ref("/players/2").set({
     Name: playerTwoName,
-    Wins: playerTwoWinCount,
-    Losses: playerTwoLossCount,
+    Wins: playerTwoWinCounter,
+    Losses: playerTwoLossCounter,
     Choice: null
   });
   //set db values for player one
   database.ref("/players/1").set({
     Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount,
+    Wins: playerOneWinCounter,
+    Losses: playerOneLossCounter,
     Choice: null
   });
 
@@ -377,19 +377,19 @@ function playerOneLoss() {
 function playerTwoLoss() {
 
   //increment ouru player two loss counter
-  playerTwoLossCount++;
+  playerTwoLossCounter++;
   //set db values for player two
   database.ref("/players/2").set({
     Name: playerTwoName,
-    Wins: playerTwoWinCount,
-    Losses: playerTwoLossCount,
+    Wins: playerTwoWinCounter,
+    Losses: playerTwoLossCounter,
     Choice: null
   });
   //set db values for player one
   database.ref("/players/1").set({
     Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount,
+    Wins: playerOneWinCounter,
+    Losses: playerOneLossCounter,
     Choice: null
   });
   playerTwoTurn = false;
@@ -403,7 +403,7 @@ function tieGame() {
   //show player two choice
   $("#choice-player-two").show();
   //timer to hide player one choice
-  setTimeout(function hidePlayerOneChoice() {
+  setTimeout(function hidechoicePlayerOne() {
     $("#choice-player-one").hide();
   }, 3000);
   //timer to hide player two choice
@@ -414,22 +414,22 @@ function tieGame() {
   $("#event-msg").html("Tie Game!");
   $("#event-msg").show();
   //hide our message
-  setTimeout(function hideMiddleMessage() {
+  setTimeout(function hideeventMsg() {
     $("#event-msg").hide();
   }, 3000);
   playerTwoTurn = false;
   //set our db values for player two
   database.ref("/players/2").set({
     Name: playerTwoName,
-    Wins: playerTwoWinCount,
-    Losses: playerTwoLossCount,
+    Wins: playerTwoWinCounter,
+    Losses: playerTwoLossCounter,
     Choice: null
   });
   //set our db values for player one
   database.ref("/players/1").set({
     Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount,
+    Wins: playerOneWinCounter,
+    Losses: playerOneLossCounter,
     Choice: null
   });
 
@@ -487,8 +487,8 @@ $(".player-one").on("click", function(){
 
   database.ref("/players/1").set({
     Name: playerOneName,
-    Wins: playerOneWinCount,
-    Losses: playerOneLossCount,
+    Wins: playerOneWinCounter,
+    Losses: playerOneLossCounter,
     Choice: playerOneChoice
   });
   $("#choice-player-one").html(playerOneChoice);
@@ -507,8 +507,8 @@ $(".player-two").on("click", function(){
 
   database.ref("/players/2").set({
     Name: playerTwoName,
-    Wins: playerTwoWinCount,
-    Losses: playerTwoLossCount,
+    Wins: playerTwoWinCounter,
+    Losses: playerTwoLossCounter,
     Choice: playerTwoChoice
   });
   $("#choice-player-two").html(playerTwoChoice);
