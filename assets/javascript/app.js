@@ -174,7 +174,7 @@ function startPlayerOne() {
   $("#user-number").html(" 1");
   $(".greetings").show();
   //set our values for player one in the database
-  database.ref("/players/1").set({
+  playerListOne.set({
     Name: playerOneName,
     Wins: playerOneWinCounter,
     Losses: playerOneLossCounter
@@ -208,7 +208,7 @@ function startPlayerTwo() {
   $("#user-number").html(" 2");
   $(".greetings").show();
   //set our values for player two in the database
-  database.ref("/players/2").set({
+  playerListTwo.set({
     Name: playerTwoName,
     Wins: playerTwoWinCounter,
     Losses: playerTwoLossCounter
@@ -238,7 +238,7 @@ $("#name-submit").on("click", function (event) {
     startPlayerOne();
     playerOneTurn = true;
     //remove player one on disconnect
-    database.ref("/players/1").onDisconnect().remove();
+    playerListOne.onDisconnect().remove();
     return;
   }
 
@@ -249,7 +249,7 @@ $("#name-submit").on("click", function (event) {
     //show our waiting message
     $(".wait-message").show();
     //remove player two on disconnect
-    database.ref("/players/2").onDisconnect().remove();
+    playerListTwo.onDisconnect().remove();
     return;
   }
 
@@ -261,7 +261,7 @@ $("#name-submit").on("click", function (event) {
     //show rock, paper, scissors
     $(".player-one-buttons").show();
     //remove player one on disconnect
-    database.ref("/players/1").onDisconnect().remove();
+    playerListOne.onDisconnect().remove();
     return;
   }
 
@@ -273,14 +273,14 @@ function playerOneWin() {
   //increment player one wins
   playerOneWinCounter++;
   //write into db the player two values
-  database.ref("/players/2").set({
+  playerListTwo.set({
     Name: playerTwoName,
     Wins: playerTwoWinCounter,
     Losses: playerTwoLossCounter,
     Choice: null
   });
   //write into db the player one values
-  database.ref("/players/1").set({
+  playerListOne.set({
     Name: playerOneName,
     Wins: playerOneWinCounter,
     Losses: playerOneLossCounter,
@@ -314,14 +314,14 @@ function playerTwoWin() {
   //increment player two win
   playerTwoWinCounter++;
   //write into db player two values
-  database.ref("/players/2").set({
+  playerListTwo.set({
     Name: playerTwoName,
     Wins: playerTwoWinCounter,
     Losses: playerTwoLossCounter,
     Choice: null
   });
   //write into db player one values
-  database.ref("/players/1").set({
+  playerListOne.set({
     Name: playerOneName,
     Wins: playerOneWinCounter,
     Losses: playerOneLossCounter,
@@ -357,14 +357,14 @@ function playerOneLoss() {
   //increment our player one loss counter
   playerOneLossCounter++;
   //set db values for player two
-  database.ref("/players/2").set({
+  playerListTwo.set({
     Name: playerTwoName,
     Wins: playerTwoWinCounter,
     Losses: playerTwoLossCounter,
     Choice: null
   });
   //set db values for player one
-  database.ref("/players/1").set({
+  playerListOne.set({
     Name: playerOneName,
     Wins: playerOneWinCounter,
     Losses: playerOneLossCounter,
@@ -379,14 +379,14 @@ function playerTwoLoss() {
   //increment ouru player two loss counter
   playerTwoLossCounter++;
   //set db values for player two
-  database.ref("/players/2").set({
+  playerListTwo.set({
     Name: playerTwoName,
     Wins: playerTwoWinCounter,
     Losses: playerTwoLossCounter,
     Choice: null
   });
   //set db values for player one
-  database.ref("/players/1").set({
+  playerListOne.set({
     Name: playerOneName,
     Wins: playerOneWinCounter,
     Losses: playerOneLossCounter,
@@ -419,14 +419,14 @@ function tieGame() {
   }, 3000);
   playerTwoTurn = false;
   //set our db values for player two
-  database.ref("/players/2").set({
+  playerListTwo.set({
     Name: playerTwoName,
     Wins: playerTwoWinCounter,
     Losses: playerTwoLossCounter,
     Choice: null
   });
   //set our db values for player one
-  database.ref("/players/1").set({
+  playerListOne.set({
     Name: playerOneName,
     Wins: playerOneWinCounter,
     Losses: playerOneLossCounter,
@@ -485,7 +485,7 @@ $(".player-one").on("click", function(){
 
   playerOneChoice = $(this).attr("data-value");
 
-  database.ref("/players/1").set({
+  playerListOne.set({
     Name: playerOneName,
     Wins: playerOneWinCounter,
     Losses: playerOneLossCounter,
@@ -505,7 +505,7 @@ $(".player-two").on("click", function(){
 
   console.log(playerTwoChoice);
 
-  database.ref("/players/2").set({
+  playerListTwo.set({
     Name: playerTwoName,
     Wins: playerTwoWinCounter,
     Losses: playerTwoLossCounter,
